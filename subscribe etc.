@@ -78,7 +78,7 @@ class wechatCallbackapiTest
 		switch ($object->Event)
 		{
 			case "subscribe":
-				$content = "welcome to my hub~~回复 小谢 or 小宝 获取更多...";
+				$content = "Welcome To My Hub~~  回复 小谢 or 小宝 获取更多...                               目前实现图片推送功能！";
 				break;
 			case "unsubcribe":
 				$content = "";
