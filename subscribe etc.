@@ -55,13 +55,19 @@ class wechatCallbackapiTest
 				case "event":
 					$result = $this->receiveEvent($postObj);
 					break;
-			    case "text":
+				case "text":
 					$result = $this->receiveText($postObj);
+					break;
+				case "image":
+					$result = $this->receiveImage($postObj);
+					break;
+				default:
+					$result = "unknown msg type: ".RX_TYPE;
 					break;
 			}
 			echo $result;
 		}else {
-			echo "什么呀";
+			echo "";
 			exit;
 		}
 	}
@@ -72,7 +78,7 @@ class wechatCallbackapiTest
 		switch ($object->Event)
 		{
 			case "subscribe":
-				$content = "welcome to my hub";
+				$content = "welcome to my hub~~回复 小谢 or 小宝 获取更多...";
 				break;
 			case "unsubcribe":
 				$content = "";
@@ -92,12 +98,19 @@ class wechatCallbackapiTest
 		}
 		else if ($keyword == "小宝"){
 			$content = array();
-			$content[] = array("Title"=>"xiaoxie",
-								"Description"=>"something about...",
+			$content[] = array("Title"=>"我们家小谢呢~",
+								"Description"=>"互相好不好？",
 								"PicUrl"=>"http://1.cleverleypc.sinaapp.com/src/IMG_0079.JPG",
 								"Url"=>"http://1.cleverleypc.sinaapp.com");
 			$result = $this->transmitNews($object, $content);
 		}
+		return $result;
+	}
+	
+	private function receiveImage($object)
+	{
+		$content = array("MediaId"=>$object->MediaId);
+		$result = $this->transmitImage($object, $content);
 		return $result;
 	}
 	
@@ -114,7 +127,7 @@ class wechatCallbackapiTest
 		</item>
 		";
 		$item_str= "";
-		foreach ($arr_item as $item)
+		foreach ($arr_item as $item)         //遍历数组中的元素
 			$item_str .= sprintf($itemTpl, $item['Title'], $item['Description'], $item['PicUrl'], $item['Url']);
 			
 			$newsTpl = "<xml>
@@ -131,6 +144,27 @@ class wechatCallbackapiTest
 			$result  = sprintf($newsTpl, $object->FromUserName, $object->ToUserName, time(), count($arr_item));
 			return $result;
 	}
+	
+	private function transmitImage($object, $imageArray)
+	{
+		$itemTpl = "<Image>
+		<MediaId><![CDATA[%s]]></MediaId>
+		</Image>";
+		
+		$item_str = sprintf($itemTpl, $imageArray['MediaId']);
+		
+		$textTpl = "<xml>
+		<ToUserName><![CDATA[%s]]></ToUserName>
+		<FromUserName><![CDATA[%s]]></FromUserName>
+		<CreateTime>%s</CreateTime>
+		<MsgType><![CDATA[image]]></MsgType>
+		$item_str
+		</xml>";
+		
+		$result = sprintf($textTpl, $object->FromUserName, $object->ToUserName, time());
+		return $result;
+	}
+	
 	private function transmitText($object, $content)
 	{
 		$textTpl = "<xml>
