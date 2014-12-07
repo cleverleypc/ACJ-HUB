@@ -64,6 +64,9 @@ class wechatCallbackapiTest
 				case "voice":
 					$result = $this->receiveVoice($postObj);
 					break;
+                case "location":
+					$result = $this->receiveLocation($postObj);
+					break;
 				default:
 					$result = "unknown msg type: ".RX_TYPE;
 					break;
@@ -104,7 +107,7 @@ class wechatCallbackapiTest
 			$content[] = array("Title"=>"我们家小谢呢~",
 								"Description"=>"互相好不好？",
 								"PicUrl"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0080.JPG",
-								"Url"=>"http://1.cleverleypc.sinaapp.com");
+								"Url"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0080.JPG");
 			$result = $this->transmitNews($object, $content);
 		}
 		else if ($keyword == "小谢组图"){
@@ -112,15 +115,15 @@ class wechatCallbackapiTest
 			$content[] = array("Title"=>"多图文标题1",
 								"Description"=>"互相好不好？",
 								"PicUrl"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0079.JPG",
-								"Url"=>"http://1.cleverleypc.sinaapp.com");
+								"Url"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0079.JPG");
 			$content[] = array("Title"=>"多图文标题2",
 								"Description"=>"互相好不好？",
 								"PicUrl"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0072.JPG",
-								"Url"=>"http://1.cleverleypc.sinaapp.com");
+								"Url"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0072.JPG");
 			$content[] = array("Title"=>"多图文标题3",
 								"Description"=>"互相好不好？",
 								"PicUrl"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0090.JPG",
-								"Url"=>"http://1.cleverleypc.sinaapp.com");
+								"Url"=>"http://1.cleverleypc.sinaapp.com/basicfunction/IMG_0090.JPG");
 			$result = $this->transmitNews($object, $content);
 		}
 		else if ($keyword == "音乐") {
@@ -149,6 +152,13 @@ class wechatCallbackapiTest
 	{
 		$content = array("MediaId"=>$object->MediaId);
 		$result = $this->transmitVoice($object, $content);
+		return $result;
+	}
+    
+    private function receiveLocation($object)
+	{
+        $content = "你发送的是位置信息:\n纬度为：".$object->Location_X.";\n经度为：".$object->Location_Y.";\n缩放级别为：".$object->Scale.";\n位置为：".$object->Label;
+		$result = $this->transmitText($object, $content);
 		return $result;
 	}
 	
